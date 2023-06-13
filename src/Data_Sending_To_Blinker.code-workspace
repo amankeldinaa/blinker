@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../../data_sender_to_blinker/Data_Sending_To_Blinker"
+		},
+		{
+			"name": "data_sender_to_blinker",
+			"path": "../../data_sender_to_blinker"
+		},
+		{
+			"name": "blinker",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
