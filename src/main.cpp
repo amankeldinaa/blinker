@@ -18,10 +18,12 @@ TaskHandle_t Task0;
 TFT_eSPI tft = TFT_eSPI();
 
 const int potentiometer = 35;
-const int bit1 = 0;
-const int bit2 = 14;
-const int bit3 = 27;
-const int bit4 = 26; 
+const int blueLedPin1 = 0;
+const int blueLedPin2 = 14;
+const int redLedPin1 = 27;
+const int redLedPin2 = 26;
+
+const int led_pins[4] = {0, 14, 27, 26};
 
 int selectedMode = 0;
 
@@ -36,7 +38,8 @@ void executeCodeForInteger8();
 void executeCodeForInteger9();
 void executeCodeForInteger10();
 
-void setLEDs(boolean blue1, boolean blue2, boolean red1, boolean red2);
+void setDisplay(boolean blue1, boolean blue2, boolean red1, boolean red2);
+void setLEDs(boolean blueLed1, boolean blueLed2, boolean redLed1, boolean redLed2);
 
 void Task1code( void * pvParameters ){
   while(1){
@@ -59,11 +62,8 @@ void Task2code( void * pvParameters ){
     if (selectedMode==0){
       Serial.println("Executing code for integer 0");
       tft.fillRect(15, 65, 300, 200, TFT_BLACK);
+      setLEDs(0,0,0,0);
       delay(100);
-      digitalWrite(bit1, LOW);
-      digitalWrite(bit2, LOW);
-      digitalWrite(bit3, LOW);
-      digitalWrite(bit4, LOW);
     }
     else if(selectedMode==1){
       Serial.println("Executing code for integer 1");
@@ -118,10 +118,9 @@ void setup() {
   tft.setFreeFont(&Open_Sans_Regular_12);
   tft.drawString("Cleverest Defence Systems", 45, 35);
 
-  pinMode(bit1, OUTPUT);
-  pinMode(bit2, OUTPUT);
-  pinMode(bit3, OUTPUT);
-  pinMode(bit4, OUTPUT);
+  pinMode(potentiometer, INPUT);
+  for(int i=0; i<4;i++)
+    pinMode(led_pins[i], OUTPUT);
 
   xTaskCreatePinnedToCore(
                     Task1code,   /* Task function. */
@@ -149,102 +148,94 @@ void loop (){
 
 
 void executeCodeForInteger1() {
-  digitalWrite(bit1, HIGH);
-  digitalWrite(bit2, LOW);
-  digitalWrite(bit3, LOW);
-  digitalWrite(bit4, LOW);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 1", 110, 190);
   
+  setDisplay(1,1,0,0);
   setLEDs(1,1,0,0);
   delay(250);
+  setDisplay(0,0,1,1);
   setLEDs(0,0,1,1);
   delay(250);
 }
 
 void executeCodeForInteger2() {
-  digitalWrite(bit1, LOW);
-  digitalWrite(bit2, HIGH);
-  digitalWrite(bit3, LOW);
-  digitalWrite(bit4, LOW);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 2", 110, 190);
 
+  setDisplay(1,1,1,1);
   setLEDs(1,1,1,1);
   delay(100);
 }
 
 void executeCodeForInteger3() {
-  digitalWrite(bit1, HIGH);
-  digitalWrite(bit2, HIGH);
-  digitalWrite(bit3, LOW);
-  digitalWrite(bit4, LOW);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 3", 110, 190);
   
+  setDisplay(1,1,1,1);
   setLEDs(1,1,1,1);
   delay(70);
+  setDisplay(0,0,0,0);
   setLEDs(0,0,0,0);
   delay(70);
 }
 
 void executeCodeForInteger4() {
-  digitalWrite(bit1, LOW);
-  digitalWrite(bit2, LOW);
-  digitalWrite(bit3, HIGH);
-  digitalWrite(bit4, LOW);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 4", 110, 190);
+
+  setDisplay(1,0,0,1);
   setLEDs(1,0,0,1);
   delay(300);
+  setDisplay(0,1,1,0);
   setLEDs(0,1,1,0);
   delay(300);
 }
 
 void executeCodeForInteger5() {
-  digitalWrite(bit1, HIGH);
-  digitalWrite(bit2, LOW);
-  digitalWrite(bit3, HIGH);
-  digitalWrite(bit4, LOW);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 5", 110, 190);
 
+  setDisplay(0,1,0,1);
   setLEDs(0,1,0,1);
   delay(200);
+  setDisplay(1,0,1,0);
   setLEDs(1,0,1,0);
   delay(200);
 }
 
 void executeCodeForInteger6() {
-  digitalWrite(bit1, LOW);
-  digitalWrite(bit2, HIGH);
-  digitalWrite(bit3, HIGH);
-  digitalWrite(bit4, LOW);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 6", 110, 190);
   
   static int counter = 0;
   if (counter < 3){
+    setDisplay(1,0,0,1);
     setLEDs(1,0,0,1);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if (counter < 6){
+    setDisplay(0,1,1,0);
     setLEDs(0,1,1,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if(counter < 9){
+    setDisplay(1,1,1,1);
     setLEDs(1,1,1,1);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
@@ -254,24 +245,24 @@ void executeCodeForInteger6() {
 }
 
 void executeCodeForInteger7() {
-  digitalWrite(bit1, HIGH);
-  digitalWrite(bit2, HIGH);
-  digitalWrite(bit3, HIGH);
-  digitalWrite(bit4, LOW);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 7", 110, 190);
 
   static int counter = 0;
   if (counter == 0 || counter == 2 || counter == 3 || counter == 5){ 
+    setDisplay(1,0,0,1);
     setLEDs(1,0,0,1);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if(counter == 1 || counter == 4 || counter == 6 || counter == 7){ 
+    setDisplay(0,1,1,0);
     setLEDs(0,1,1,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
@@ -282,35 +273,39 @@ void executeCodeForInteger7() {
 }
 
 void executeCodeForInteger8() {
-  digitalWrite(bit1, LOW);
-  digitalWrite(bit2, LOW);
-  digitalWrite(bit3, LOW);
-  digitalWrite(bit4, HIGH);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 8", 110, 190);
   static int counter = 0;
   if (counter == 0){
+    setDisplay(0,1,0,0);
     setLEDs(0,1,0,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if (counter == 1){
+    setDisplay(1,0,0,0);
     setLEDs(1,0,0,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if (counter == 2){
+    setDisplay(0,0,1,0);
     setLEDs(0,0,1,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if (counter == 3){
+    setDisplay(0,0,0,1);
     setLEDs(0,0,0,1);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
@@ -320,35 +315,39 @@ void executeCodeForInteger8() {
 }
 
 void executeCodeForInteger9() {
-  digitalWrite(bit1, HIGH);
-  digitalWrite(bit2, LOW);
-  digitalWrite(bit3, LOW);
-  digitalWrite(bit4, HIGH);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 9", 110, 190);
   static int counter = 0;
   if (counter < 2){
+    setDisplay(1,0,1,0);
     setLEDs(1,0,1,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if (counter < 4){
+    setDisplay(0,1,1,0);
     setLEDs(0,1,1,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if (counter < 6){
+    setDisplay(1,0,1,0);
     setLEDs(1,0,1,0);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
   }else if (counter < 8){
+    setDisplay(1,0,0,1);
     setLEDs(1,0,0,1);
     delay(100);
+    setDisplay(0,0,0,0);
     setLEDs(0,0,0,0);
     delay(100);
     counter++;
@@ -358,24 +357,23 @@ void executeCodeForInteger9() {
 }
 
 void executeCodeForInteger10() {
-  digitalWrite(bit1, LOW);
-  digitalWrite(bit2, HIGH);
-  digitalWrite(bit3, LOW);
-  digitalWrite(bit4, HIGH);
   tft.fillRect(100, 190, 200, 50, TFT_BLACK);
   tft.setFreeFont(&Open_Sans_Bold_22);
   tft.drawString("NUSQA 10", 110, 190);
 
+  setDisplay(1,0,1,0);
   setLEDs(1,0,1,0);
   delay(150);
+  setDisplay(0,0,0,0);
   setLEDs(0,0,0,0);
   delay(150);
 }
 
-void setLEDs(boolean blue1, boolean blue2, boolean red1, boolean red2){
+void setDisplay(boolean blue1, boolean blue2, boolean red1, boolean red2){
   if (blue1 == 1){
     tft.fillRect(15, 100, 45, 20, TFT_COLORB);
     tft.fillRect(75, 100, 45, 20, TFT_COLORB);
+
   }else {
     tft.fillRect(15, 100, 45, 20, TFT_BLACK);
     tft.fillRect(75, 100, 45, 20, TFT_BLACK);
@@ -403,5 +401,31 @@ void setLEDs(boolean blue1, boolean blue2, boolean red1, boolean red2){
   }else {
     tft.fillRect(178, 135, 45, 20, TFT_BLACK);
     tft.fillRect(238, 135, 45, 20, TFT_BLACK);
+  }
+}
+
+void setLEDs(boolean blueLed1, boolean blueLed2, boolean redLed1, boolean redLed2){
+  if (blueLed1 == 1){
+    digitalWrite(blueLedPin1, HIGH);
+  }else {
+    digitalWrite(blueLedPin1, LOW);
+  } 
+
+  if (blueLed2 == 1){
+    digitalWrite(blueLedPin2, HIGH);
+  }else {
+    digitalWrite(blueLedPin2, LOW);
+  }
+
+  if (redLed1 == 1){
+    digitalWrite(redLedPin1, HIGH);
+  }else{
+    digitalWrite(redLedPin1, LOW);
+  }
+
+  if (redLed2 == 1){
+    digitalWrite(redLedPin2, HIGH);
+  }else {
+    digitalWrite(redLedPin2, LOW);
   }
 }
